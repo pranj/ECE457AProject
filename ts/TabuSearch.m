@@ -74,14 +74,14 @@ for p = 1:NumPoints
     end
 end
 
-[TotalSolCost SolCost] = CalculateCost(Sol, Data);
+[TotalSolCost, SolCost] = CalculateCost(Sol, Data);
 TabuMoves = zeros(NumPoints, NumPoints, NumReceivers);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [BestNSol, BestNCost, SolCost, TabuMoves] = GetBestNeighbourSol( ...
+function [BestCandidateSol, BestCandidateCost, SolCost, TabuMoves] = GetBestNeighbourSol( ...
     Data, Sol, SolCost, TabuMoves, TabuLength, NumReceivers, BestCost)
 
 % This function gets the neighbours of the given solution
@@ -111,8 +111,8 @@ NumPoints = size(Data, 1);
 AddTabuMove = false;
 
 % Get all neighbouring moves
-bestCandidateSol = Sol;
-bestCandidateCost = Inf;
+BestCandidateSol = Sol;
+BestCandidateCost = Inf;
 tabuEi = zeros(1, 3);
 tabuEj = zeros(1, 3);
 
@@ -139,12 +139,12 @@ for r = 1:NumReceivers
             newSolCost = SolCost;
             newSolCost(r) = newTotCost;
             
-            if newTotCost < bestCandidateCost
+            if newTotCost < BestCandidateCost
                 % Aspiration Criteria
                 newCost = sum(newSolCost);
                 if newCost < BestCost
-                    bestCandidateSol = newSol;
-                    bestCandidateCost = sum(newSolCost);
+                    BestCandidateSol = newSol;
+                    BestCandidateCost = sum(newSolCost);
                     AddTabuMove = true;
                     tabuEi = [i Sol(i, r) r];
                     tabuEj = [j Sol(j, r) r];
@@ -158,8 +158,8 @@ for r = 1:NumReceivers
                 end
                 
                 % Non tabu move, update candidate
-                bestCandidateSol = newSol;
-                bestCandidateCost = sum(newSolCost);
+                BestCandidateSol = newSol;
+                BestCandidateCost = sum(newSolCost);
                 AddTabuMove = true;
                 tabuEi = [i Sol(i, r) r];
                 tabuEj = [j Sol(j, r) r];
@@ -198,12 +198,12 @@ for r = 1:NumReceivers
                 newSolCost(r) = newCosts(1);
                 newSolCost(rc) = newCosts(2);
                 
-                if newTotCost < bestCandidateCost
+                if newTotCost < BestCandidateCost
                     % Aspiration Criteria
                     newCost = sum(newSolCost);
                     if newCost < BestCost
-                        bestCandidateSol = newSol;
-                        bestCandidateCost = sum(newSolCost);
+                        BestCandidateSol = newSol;
+                        BestCandidateCost = sum(newSolCost);
                         AddTabuMove = true;
                         tabuEi = [i Sol(i, r) r];
                         tabuEj = [j Sol(j, rc) rc];
@@ -217,8 +217,8 @@ for r = 1:NumReceivers
                     end
 
                     % Non tabu move, update candidate
-                    bestCandidateSol = newSol;
-                    bestCandidateCost = sum(newSolCost);
+                    BestCandidateSol = newSol;
+                    BestCandidateCost = sum(newSolCost);
                     AddTabuMove = true;
                     tabuEi = [i Sol(i, r) r];
                     tabuEj = [j Sol(j, rc) rc];
@@ -263,12 +263,12 @@ for r = 1:NumReceivers
                 newSolCost(r) = newCosts(1);
                 newSolCost(rc) = newCosts(2);
                 
-                if newTotCost < bestCandidateCost
+                if newTotCost < BestCandidateCost
                     % Aspiration Criteria
                     newCost = sum(newSolCost);
                     if newCost < BestCost
-                        bestCandidateSol = newSol;
-                        bestCandidateCost = sum(newSolCost);
+                        BestCandidateSol = newSol;
+                        BestCandidateCost = sum(newSolCost);
                         AddTabuMove = true;
                         tabuEi = [i Sol(i, r) r];
                         tabuEj = [0 0 0];
@@ -281,8 +281,8 @@ for r = 1:NumReceivers
                     end
 
                     % Non tabu move, update candidate
-                    bestCandidateSol = newSol;
-                    bestCandidateCost = sum(newSolCost);
+                    BestCandidateSol = newSol;
+                    BestCandidateCost = sum(newSolCost);
                     AddTabuMove = true;
                     tabuEi = [i Sol(i, r) r];
                     tabuEj = [0 0 0];
@@ -306,6 +306,9 @@ if AddTabuMove
         TabuMoves(tabuEj(1), tabuEj(2), tabuEj(3)) = TabuLength;
     end
 end
+
+%Update the cost
+[BestCandidateCost, SolCost] = CalculateCost(BestCandidateSol, Data);
 
 end
 

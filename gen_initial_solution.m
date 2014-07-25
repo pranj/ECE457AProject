@@ -7,26 +7,19 @@
 %          The matrix has to be symmetric.
 %
 % Outputs:
-%   solution:  A matrix of size PxR where P is a point and
-%         R is a receiver. Each row contains the points in the order
-%         that the corresponding receiver visits them.
-%   solutionCost: The total cost of the given solution.
+%   solution: A vector of size P+(R-1) where P is the number of points and
+%   R is the number of receivers. P points will be divided into R receivers
+%   with R-1 gaps (denoted by -1) between each receiver. 
 
 % Get the number of points that need to be visited
 
 function [solution] = gen_initial_solution(data, numReceivers)
 
 numPoints = size(data, 1);
-
-solution = zeros(numReceivers, numPoints);
-
-permutation = randperm(numPoints);
-recvrIndices = ones(numReceivers, 1);
-
-for i = 1:numPoints
-    receiver = randi(numReceivers);
-    solution(receiver, recvrIndices(receiver)) = permutation(i);
-    recvrIndices(receiver) = recvrIndices(receiver) + 1;
-end
+solutionSize = numPoints + numReceivers - 1;
+solution = randperm(solutionSize);
+dividerValues = (solutionSize - numReceivers + 2:solutionSize);
+[~, dividers] = intersect(solution, dividerValues);
+solution(dividers) = 0;
 
 end

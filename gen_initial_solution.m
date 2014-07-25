@@ -14,29 +14,19 @@
 
 % Get the number of points that need to be visited
 
-function [solution, totalSolutionCost, solutionCost] = ...
-    gen_initial_solution(data, numReceivers, startpoint)
+function [solution] = gen_initial_solution(data, numReceivers)
 
 numPoints = size(data, 1);
 
 solution = zeros(numReceivers, numPoints);
 
-if nargin > 3
-    solution(:, 1) = startpoint;
-else
-    solution(:, 1) = randperm(numPoints, numReceivers)'; 
-end
-
 permutation = randperm(numPoints);
-recvrIndices = ones(numReceivers, 1) + 1;
+recvrIndices = ones(numReceivers, 1);
 
 for i = 1:numPoints
-    if ~any(ismember(permutation(i), solution(:, 1)))
-        receiver = randi(numReceivers);
-        solution(receiver, recvrIndices(receiver)) = permutation(i);
-        recvrIndices(receiver) = recvrIndices(receiver) + 1;
-    end
+    receiver = randi(numReceivers);
+    solution(receiver, recvrIndices(receiver)) = permutation(i);
+    recvrIndices(receiver) = recvrIndices(receiver) + 1;
 end
 
-[totalSolutionCost, solutionCost] = CalculateCost(solution, data);
 end

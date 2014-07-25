@@ -13,9 +13,8 @@
 
 % Get the number of points that need to be visited
 
-function [solution] = gen_initial_solution(data, numReceivers)
+function [solution] = gen_initial_solution(numPoints, numReceivers)
 
-numPoints = size(data, 1);
 solutionSize = numPoints + numReceivers - 1;
 solution = randperm(solutionSize);
 dividerValues = (solutionSize - numReceivers + 2:solutionSize);

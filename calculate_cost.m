@@ -8,16 +8,17 @@ for receiver = 1:numReceivers
     % Calculate cost of a single tour
     % Find sum of cost of adjacent
     for i = 1:numPoints
-        src = solution(receiver, i);
-        if i == 1
-            cost(receiver) = depotCosts(src);
+        current = solution(receiver, i);
+        if current == 0
+            break
         end
-        if i < numPoints
-            if solution(receiver, i + 1) == 0
-                break
-            end
-            to = solution(receiver, i + 1);
-            cost(receiver) = cost(receiver) + costs(src, to);
+
+
+        if i == 1
+            cost(receiver) = depotCosts(current);
+        else
+            previous = solution(receiver, i - 1);
+            cost(receiver) = cost(receiver) + costs(previous, current);
         end
     end
 end

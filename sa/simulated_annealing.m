@@ -9,8 +9,12 @@ cooling_iter = 0;
 initial_temp = 100;
 current_temp = initial_temp;
 
-%pick random neighbour instead of for loop
-%for next_solution in all next iterations
+operation = randi(2);
+if operation == 1
+    %perform swap
+else
+    %perform add and remove
+end
     next_score = CalculateCost(next_solution);
     if next_score < current_score
         current_score = next_score;

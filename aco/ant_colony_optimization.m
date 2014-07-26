@@ -1,5 +1,5 @@
 function [LowestCostPath, LowestCostSoFar] = ...
-    ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, InitialPheromone, Alpha, Beta, EvaporationRate)
+    ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
 
 NumArtificialPoints = NumPoints + NumReceivers - 1;
 EdgeDesirability = Costs.^(-1 * Beta);
@@ -12,7 +12,6 @@ for iteration = 1:NumIterations
     N = ones(NumReceivers, NumArtificialPoints);
     IterationLowestCostSoFar = Inf;
     IterationLowestCostPath = zeros(1, NumArtificialPoints);
-
     for CurrentReceiver = 1:NumReceivers
         CurrentPath = zeros(1, NumArtificialPoints);
         CurrentPath(1) = randi(NumArtificialPoints);
@@ -30,21 +29,27 @@ for iteration = 1:NumIterations
                 end
             end
 
-            TotalWeight = sum(P);
-            for idx = 1:numel(UnvisitedNeighbours)
-                if UnvisitedNeighbours(idx) == CurrentPoint
-                    P(idx) = 0;
-                else
-                    P(idx) = P(idx) / TotalWeight;
-                end
-            end
-
-            RouletteWheel = cumsum(P);
             r = rand(1, 1);
-            for idx = 1:numel(UnvisitedNeighbours)
-                if r <= RouletteWheel(idx)
-                    CurrentPath(iCurrentPoint + 1) = UnvisitedNeighbours(idx);
-                    break
+            if r < Ro && iCurrentPoint < NumArtificialPoints
+                [MaxValue, MaxIdx] = max(P);
+                CurrentPath(iCurrentPoint + 1) = UnvisitedNeighbours(MaxIdx);
+            else
+                TotalWeight = sum(P);
+                for idx = 1:numel(UnvisitedNeighbours)
+                    if UnvisitedNeighbours(idx) == CurrentPoint
+                        P(idx) = 0;
+                    else
+                        P(idx) = P(idx) / TotalWeight;
+                    end
+                end
+
+                RouletteWheel = cumsum(P);
+                r = rand(1, 1);
+                for idx = 1:numel(UnvisitedNeighbours)
+                    if r <= RouletteWheel(idx)
+                        CurrentPath(iCurrentPoint + 1) = UnvisitedNeighbours(idx);
+                        break
+                    end
                 end
             end
         end

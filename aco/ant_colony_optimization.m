@@ -25,7 +25,8 @@ for iteration = 1:NumIterations
                 if neigbour == CurrentPoint
                     P(idx) = 0;
                 else
-                    P(idx) = (PheromoneConcentration(CurrentPoint, neigbour) ^ Alpha) * EdgeDesirability(CurrentPoint, neigbour);
+                    P(idx) = (PheromoneConcentration(CurrentPoint, neigbour) ^ Alpha) ...
+                                * EdgeDesirability(CurrentPoint, neigbour);
                 end
             end
 

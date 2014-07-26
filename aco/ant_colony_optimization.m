@@ -1,5 +1,5 @@
 function [LowestCostPath, LowestCostSoFar] = ...
-    ant_colony_optimization(Costs, StartPoint, NumIterations, NumPoints, NumReceivers, InitialPheromone, Alpha, Beta, EvaporationRate)
+    ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, InitialPheromone, Alpha, Beta, EvaporationRate)
 
 NumArtificialPoints = NumPoints + NumReceivers - 1;
 EdgeDesirability = Costs.^(-1 * Beta);
@@ -8,14 +8,14 @@ PheromoneConcentration = InitialPheromone * ones(size(Costs));
 LowestCostSoFar = Inf;
 LowestCostPath = zeros(1, NumArtificialPoints);
 
-for k = 1:NumIterations
+for iteration = 1:NumIterations
     N = ones(NumReceivers, NumArtificialPoints);
     IterationLowestCostSoFar = Inf;
     IterationLowestCostPath = zeros(1, NumArtificialPoints);
 
     for CurrentReceiver = 1:NumReceivers
         CurrentPath = zeros(1, NumArtificialPoints);
-        CurrentPath(1) = StartPoint;
+        CurrentPath(1) = randi(NumArtificialPoints);
         for iCurrentPoint = 1:NumArtificialPoints
             CurrentPoint = CurrentPath(iCurrentPoint);
             N(CurrentReceiver, CurrentPoint) = 0;
@@ -71,7 +71,6 @@ for k = 1:NumIterations
 end
 
 LowestCostPath = NormalizePath(LowestCostPath, NumPoints);
-PheromoneConcentration
 end
 
 

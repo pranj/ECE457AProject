@@ -1,0 +1,48 @@
+function [GlobalBestSolution, GlobalBestCost] = particle_swarm_optimization( ...
+                Costs, NumIterations, NumParticles, NumPoints, NumReceivers, VMax)
+    SolutionSize = NumPoints + NumReceivers - 1;
+
+    GlobalBestCost = Inf;
+    GlobalBestSolution = zeros(1, SolutionSize);
+
+    Particles = zeros(NumParticles, SolutionSize);
+    for particle = 1:NumParticles
+        ParticleSolution = gen_initial_solution(NumPoints, NumReceivers);
+        Particles(particle, :) = ParticleSolution;
+    end
+
+
+    for iteration = 1:NumIterations
+        IterationParticleCosts = Inf * ones(1, NumParticles);
+
+        for particle = 1:NumParticles
+            ParticleSolution = Particles(particle, :);
+            IterationParticleCosts(particle) = calculate_cost(ParticleSolution, Costs, Costs(end, :));
+        end
+
+        [IterationBestParticleCost, IterationBestParticle] = min(IterationParticleCosts);
+        IterationWorstParticleCost = max(IterationParticleCosts);
+
+        if IterationBestParticleCost < GlobalBestCost
+            GlobalBestCost = IterationBestParticleCost;
+            GlobalBestSolution = Particles(IterationBestParticle, :);
+        end
+
+
+        for particle = 1:NumParticles
+            ParticleSolution = Particles(particle, :);
+            ParticleVelocity = calculate_velocity_size(VMax, IterationParticleCosts(particle), IterationWorstParticleCost);
+
+            NextParticleSolution = ParticleSolution;
+            for i = 1:ParticleVelocity
+                NextParticleSolution = random_swap(NextParticleSolution);
+            end
+            Particles(particle, :) = NextParticleSolution;
+        end
+    end
+
+end
+
+function [NumMoves] = calculate_velocity_size(VMax, ParticleCost, WorstParticleCost)
+    NumMoves = ceil((ParticleCost / WorstParticleCost) * VMax);
+end

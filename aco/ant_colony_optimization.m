@@ -1,10 +1,11 @@
 function [LowestCostPath, LowestCostSoFar] = ...
-    ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
+    ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, ...
+                            InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
 
-NumArtificialPoints = NumPoints + NumReceivers - 1;
+NumArtificialPoints = NumPoints + NumReceivers;
+FirstDepot = NumPoints + 1;
 EdgeDesirability = Costs.^(-1 * Beta);
 PheromoneConcentration = InitialPheromone * ones(size(Costs));
-
 LowestCostSoFar = Inf;
 LowestCostPath = zeros(1, NumArtificialPoints);
 
@@ -14,7 +15,7 @@ for iteration = 1:NumIterations
     IterationLowestCostPath = zeros(1, NumArtificialPoints);
     for CurrentReceiver = 1:NumReceivers
         CurrentPath = zeros(1, NumArtificialPoints);
-        CurrentPath(1) = randi(NumArtificialPoints);
+        CurrentPath(1) = FirstDepot;
         for iCurrentPoint = 1:NumArtificialPoints
             CurrentPoint = CurrentPath(iCurrentPoint);
             N(CurrentReceiver, CurrentPoint) = 0;
@@ -22,12 +23,8 @@ for iteration = 1:NumIterations
             P = zeros(1, size(UnvisitedNeighbours, 2));
             for idx = 1:numel(UnvisitedNeighbours)
                 neigbour = UnvisitedNeighbours(idx);
-                if neigbour == CurrentPoint
-                    P(idx) = 0;
-                else
-                    P(idx) = (PheromoneConcentration(CurrentPoint, neigbour) ^ Alpha) ...
+                P(idx) = (PheromoneConcentration(CurrentPoint, neigbour) ^ Alpha) ...
                                 * EdgeDesirability(CurrentPoint, neigbour);
-                end
             end
 
             r = rand(1, 1);
@@ -37,11 +34,7 @@ for iteration = 1:NumIterations
             else
                 TotalWeight = sum(P);
                 for idx = 1:numel(UnvisitedNeighbours)
-                    if UnvisitedNeighbours(idx) == CurrentPoint
-                        P(idx) = 0;
-                    else
-                        P(idx) = P(idx) / TotalWeight;
-                    end
+                    P(idx) = P(idx) / TotalWeight;
                 end
 
                 RouletteWheel = cumsum(P);
@@ -78,7 +71,6 @@ end
 
 LowestCostPath = NormalizePath(LowestCostPath, NumPoints);
 end
-
 
 function [NormalizedPath] = NormalizePath(Path, NumPoints)
     NormalizedPath = Path;

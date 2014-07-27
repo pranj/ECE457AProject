@@ -8,12 +8,6 @@ limit = max(solution);
 swapPoints = randperm(limit);
 swapPoints = swapPoints(1:2);
 
-idx1 = solution == swapPoints(1);
-idx2 = solution == swapPoints(2);
-
-solution(idx1) = swapPoints(2);
-solution(idx2) = swapPoints(1);
-
-nextSolution = solution;
+nextSolution = swap(solution, swapPoints(1), swapPoints(2));
 
 end

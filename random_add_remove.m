@@ -7,17 +7,8 @@ function [nextSolution] = random_add_remove(solution)
 limit = max(solution);
 
 removedPoint = randi(limit);
-removeIdx = find(solution == removedPoint);
 insertIdx = randi(size(solution, 2));
 
-if removeIdx > insertIdx
-    solution(insertIdx + 1:removeIdx) = solution(insertIdx:removeIdx - 1);
-    solution(insertIdx) = removedPoint;
-else
-    solution(removeIdx:insertIdx - 1) = solution(removeIdx + 1:insertIdx);
-    solution(insertIdx) = removedPoint;
-end
-
-nextSolution = solution;
+nextSolution = add_remove(solution, removedPoint, insertIdx);
 
 end

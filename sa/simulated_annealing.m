@@ -1,11 +1,12 @@
 function [GlobalBestCost] = simulated_annealing( ...
-                    Costs, Alpha, NumPoints, NumReceivers, InitialTemperature, IterationsPerTemperature, FinalTemperature)
+                    Costs, Alpha, NumPoints, NumReceivers, InitialTemperature, IterationsPerTemperature, FinalTemperature, ...
+                    InitialSoln)
 SolutionSize = NumPoints + NumReceivers - 1;
 
 GlobalBestCost = Inf;
 GlobalBestSolution = zeros(1, SolutionSize);
 
-CurrentSoln = [4 3 0 2 1];%gen_initial_solution(NumPoints, NumReceivers);
+CurrentSoln = InitialSoln;
 CurrentSolnCost = calculate_cost(CurrentSoln, Costs, Costs(end, :));
 
 CurrentTemperature = InitialTemperature;

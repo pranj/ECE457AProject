@@ -1,6 +1,7 @@
-function [GlobalBestCost] = simulated_annealing( ...
-                    Costs, Alpha, NumPoints, NumReceivers, InitialTemperature, IterationsPerTemperature, FinalTemperature, ...
+function [GlobalBestSolution, GlobalBestCost] = simulated_annealing( ...
+                    Costs, Alpha, NumReceivers, InitialTemperature, IterationsPerTemperature, FinalTemperature, ...
                     InitialSoln)
+NumPoints = size(Costs, 1);
 SolutionSize = NumPoints + NumReceivers - 1;
 
 GlobalBestCost = Inf;
@@ -42,5 +43,5 @@ while CurrentTemperature > FinalTemperature
         LastTemperatureUpdate = iteration;
     end
 
-    iteration += 1;
+    iteration = iteration + 1;
 end

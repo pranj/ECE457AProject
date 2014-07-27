@@ -2,10 +2,12 @@ function [LowestCostPath, LowestCostSoFar] = ...
     ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, ...
                             NumAnts, InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
 
-NumArtificialPoints = NumPoints + NumReceivers;
+[AugmentedCostMatrix, NumArtificialPoints] = augment_cost_matrix(Costs, NumPoints, NumReceivers);
+
 FirstDepot = NumPoints + 1;
-EdgeDesirability = Costs.^(-1 * Beta);
-PheromoneConcentration = InitialPheromone * ones(size(Costs));
+EdgeDesirability = AugmentedCostMatrix.^(-1 * Beta);
+PheromoneConcentration = InitialPheromone * ones(size(AugmentedCostMatrix));
+
 LowestCostSoFar = Inf;
 LowestCostPath = zeros(1, NumArtificialPoints);
 
@@ -49,7 +51,7 @@ for iteration = 1:NumIterations
         end
 
         NormalizedCurrentPath = normalize_path(CurrentPath, NumPoints);
-        CurrentCost = calculate_cost(NormalizedCurrentPath, Costs, Costs(end, :));
+        CurrentCost = calculate_cost(NormalizedCurrentPath, AugmentedCostMatrix, AugmentedCostMatrix(end, :));
         if CurrentCost < IterationLowestCostSoFar
             IterationLowestCostPath = CurrentPath;
             IterationLowestCostSoFar = CurrentCost;
@@ -76,6 +78,22 @@ function [NormalizedPath] = normalize_path(Path, NumPoints)
     for idx = 1:numel(NormalizedPath)
         if NormalizedPath(idx) > NumPoints
             NormalizedPath(idx) = 0;
+        end
+    end
+end
+
+function [AugmentedMatrix, AugmentedSize] = augment_cost_matrix(Costs, NumPoints, NumReceivers)
+    AugmentedSize = NumPoints + NumReceivers;
+    AugmentedMatrix = zeros(AugmentedSize, AugmentedSize);
+
+    for idx = 1:AugmentedSize
+        if idx > NumPoints + 1
+            X = cat(1, Costs(:, NumPoints + 1), Inf * ones(AugmentedSize - (NumPoints + 1), 1));
+            AugmentedMatrix(:, idx) = X;
+            AugmentedMatrix(idx, :) = AugmentedMatrix(NumPoints + 1, :);
+        else
+            X = cat(1, Costs(:, idx), zeros(AugmentedSize - (NumPoints + 1), 1));
+            AugmentedMatrix(:, idx) = X;
         end
     end
 end

@@ -7,7 +7,7 @@ function [neighbour] = random_neighbour(solution)
 r = rand(1, 1);
 
 if r < 0.5
-    neighbour = random_swap(solution)
+    neighbour = random_swap(solution);
 else
-    neighbour = random_add_remove(solution)
+    neighbour = random_add_remove(solution);
 end

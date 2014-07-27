@@ -48,7 +48,6 @@ for iteration = 1:NumIterations
             end
         end
 
-
         NormalizedCurrentPath = NormalizePath(CurrentPath, NumPoints);
         CurrentCost = calculate_cost(NormalizedCurrentPath, Costs, Costs(end, :));
         if CurrentCost < IterationLowestCostSoFar

@@ -1,46 +1,45 @@
-function [x] = ...
-    simulated_annealing(initial, cooling_schedule, alpha, iter_per_temp)
-current_score = Inf;
-current_solution = initial;
+function [GlobalBestCost] = simulated_annealing( ...
+                    Costs, Alpha, NumPoints, NumReceivers, InitialTemperature, IterationsPerTemperature, FinalTemperature)
+SolutionSize = NumPoints + NumReceivers - 1;
 
-temp_iter = 0;
-cooling_iter = 0;
+GlobalBestCost = Inf;
+GlobalBestSolution = zeros(1, SolutionSize);
 
-initial_temp = 100;
-current_temp = initial_temp;
+CurrentSoln = [4 3 0 2 1];%gen_initial_solution(NumPoints, NumReceivers);
+CurrentSolnCost = calculate_cost(CurrentSoln, Costs, Costs(end, :));
 
-operation = randi(2);
-if operation == 1
-    %perform swap
-else
-    %perform add and remove
-end
-    next_score = CalculateCost(next_solution);
-    if next_score < current_score
-        current_score = next_score;
-        current_solution = next_solution;
+CurrentTemperature = InitialTemperature;
+LastTemperatureUpdate = 0;
+
+iteration = 1;
+while CurrentTemperature > FinalTemperature
+    Neighbour = random_swap(CurrentSoln);
+    NeighbourCost = calculate_cost(Neighbour, Costs, Costs(end, :));
+    CostDifference = NeighbourCost - CurrentSolnCost;
+
+    if CostDifference < 0
+        CurrentSoln = Neighbour;
+        CurrentSolnCost = NeighbourCost;
     else
-        p = exp(-(next_score-current_score)/current_temp);
-        if p > rand
-            current_score = next_score;
-            current_solution = next_solution;
+        AcceptanceProb = exp( -1 * CostDifference / CurrentTemperature );
+        r = rand(1, 1);
+        if r < AcceptanceProb
+            CurrentSoln = Neighbour;
+            CurrentSolnCost = NeighbourCost;
         end
     end
-    
-    temp_iter = temp_iter + 1;
-    if temp_iter == iter_per_temp
-        current_temp = change_temp(inital_temp, cooling_schedule, iter);
-        cooling_iter = cooling_iter + 1;
-        temp_iter = 0;
+
+    if CurrentSolnCost < GlobalBestCost
+        GlobalBestCost = CurrentSolnCost;
+        GlobalBestSolution = CurrentSoln;
     end
-end
 
-function new_temp = change_temp(temp, schedule, alpha, iteration)
-if schedule == 1
-    new_temp = initial_temp*alpha^iteration
-end     
-end
+    IterationsSinceLastUpdate = iteration - LastTemperatureUpdate;
+    if IterationsSinceLastUpdate >= IterationsPerTemperature
+        NumberOfUpdates = iteration / IterationsPerTemperature;
+        CurrentTemperature = InitialTemperature * (Alpha ^ NumberOfUpdates);
+        LastTemperatureUpdate = iteration;
+    end
 
-function [solutions] = next_iteration(solution)
-
+    iteration += 1;
 end

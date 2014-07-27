@@ -1,6 +1,6 @@
 function [LowestCostPath, LowestCostSoFar] = ...
     ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, ...
-                            InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
+                            NumAnts, InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
 
 NumArtificialPoints = NumPoints + NumReceivers;
 FirstDepot = NumPoints + 1;
@@ -10,16 +10,16 @@ LowestCostSoFar = Inf;
 LowestCostPath = zeros(1, NumArtificialPoints);
 
 for iteration = 1:NumIterations
-    N = ones(NumReceivers, NumArtificialPoints);
+    N = ones(NumAnts, NumArtificialPoints);
     IterationLowestCostSoFar = Inf;
     IterationLowestCostPath = zeros(1, NumArtificialPoints);
-    for CurrentReceiver = 1:NumReceivers
+    for CurrentAnt = 1:NumAnts
         CurrentPath = zeros(1, NumArtificialPoints);
         CurrentPath(1) = FirstDepot;
         for iCurrentPoint = 1:NumArtificialPoints
             CurrentPoint = CurrentPath(iCurrentPoint);
-            N(CurrentReceiver, CurrentPoint) = 0;
-            UnvisitedNeighbours = find(N(CurrentReceiver, :));
+            N(CurrentAnt, CurrentPoint) = 0;
+            UnvisitedNeighbours = find(N(CurrentAnt, :));
             P = zeros(1, size(UnvisitedNeighbours, 2));
             for idx = 1:numel(UnvisitedNeighbours)
                 neigbour = UnvisitedNeighbours(idx);
@@ -48,7 +48,7 @@ for iteration = 1:NumIterations
             end
         end
 
-        NormalizedCurrentPath = NormalizePath(CurrentPath, NumPoints);
+        NormalizedCurrentPath = normalize_path(CurrentPath, NumPoints);
         CurrentCost = calculate_cost(NormalizedCurrentPath, Costs, Costs(end, :));
         if CurrentCost < IterationLowestCostSoFar
             IterationLowestCostPath = CurrentPath;
@@ -68,10 +68,10 @@ for iteration = 1:NumIterations
     end
 end
 
-LowestCostPath = NormalizePath(LowestCostPath, NumPoints);
+LowestCostPath = normalize_path(LowestCostPath, NumPoints);
 end
 
-function [NormalizedPath] = NormalizePath(Path, NumPoints)
+function [NormalizedPath] = normalize_path(Path, NumPoints)
     NormalizedPath = Path;
     for idx = 1:numel(NormalizedPath)
         if NormalizedPath(idx) > NumPoints

@@ -9,7 +9,7 @@ function [Child1 Child2] = cycle_crossover(Parent1, Parent2)
         CurrentIndex = StartingIndex;
         i = 1;
         while i == 1 || CurrentIndex ~= StartingIndex
-            i = i + 1; % Do-while hack sorry :/
+            i = i + 1; % Do-while hack... sorry :/
             Cycles(CurrentIndex) = CurrentCycle;
             CurrentValue = Parent2(CurrentIndex);
             CurrentIndex = find(Parent1 == CurrentValue, 1);

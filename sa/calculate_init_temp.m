@@ -1,34 +1,14 @@
-function [currentTemp] = calculate_init_temp(costs, initialSol)
-    currentTemp = 10E20;
-    currentSolution = initialSol;
-    currentCost = calculate_cost(currentSolution, costs, costs(end, :));
+function [initTemp] = calculate_init_temp(costs, initialProb)
+    numPoints = size(costs, 1);
+    sortedCosts = sort(reshape(triu(costs, 1), 1, numPoints*numPoints), 'descend');
+    sortedCosts(sortedCosts == 0) = [];
     
-    totalWorst = 0;
-    totalWorstSelected = 0;
-    
-    
-    while (totalWorstSelected/totalWorst > 0.55 || totalWorst == 0)
-        nextSolution = random_neighbour(currentSolution);
-        while ~any(nextSolution)
-            nextSolution = random_neighbour(currentSolution);
-        end
-        nextCost = calculate_cost(nextSolution, costs, costs(end, :));
-        
-        costDiff = nextCost - currentCost;
-        
-        if costDiff < 0
-           currentSolution = nextSolution;
-           currentCost = nextCost;
-        else
-            totalWorst = totalWorst + 1;
-            acceptanceRate = exp(-1 * costDiff / currentTemp);
-            r = rand(1, 1);
-            if r < acceptanceRate
-                totalWorstSelected = totalWorstSelected + 1;
-                currentSolution = nextSolution;
-                currentCost = nextCost;
-                currentTemp = currentTemp / 2;
-            end
-        end 
-    end
+    % the max change in objective function is the removal of a point B
+    % from a sub-path A-X-B and insertion into sub-path D-E. A-X and
+    % X-C is a part of the set of 3 smallest path costs and A-C is part of 
+    % the set of 3 largest path costs. D-E is part of the 3 smallest path
+    % costs and D-X and X-E is part of the 3 largest path costs
+
+    maxChange = sum(sortedCosts(1:3)) - sum(sortedCosts(end:end-3));
+    initTemp = -1 * maxChange/log(initialProb); 
 end

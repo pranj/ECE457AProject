@@ -25,7 +25,7 @@ function [Child] = child(Parent1, Parent2, ChromosomeLength, ChosenInterval)
     for i = 1:ChromosomeLength
         if i < ChosenInterval(1) || i > ChosenInterval(2)
             Child(i) = Parent2(X(WriteIdx));
-            WriteIdx += 1;
+            WriteIdx = WriteIdx + 1;
         end
     end
 end

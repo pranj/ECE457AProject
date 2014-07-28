@@ -3,12 +3,16 @@
 % insert it.
 
 function [nextSolution] = random_add_remove(solution)
+solSize = size(solution, 2);
 
-limit = max(solution);
+removeIdx = randi(solSize);
+while ~solution(removeIdx)
+    removeIdx = randi(solSize);
+end
 
-removedPoint = randi(limit);
+removePoint = solution(removeIdx);
 insertIdx = randi(size(solution, 2));
 
-nextSolution = add_remove(solution, removedPoint, insertIdx);
+nextSolution = add_remove(solution, removePoint, insertIdx);
 
 end

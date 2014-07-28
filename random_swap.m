@@ -3,11 +3,18 @@
 
 function [nextSolution] = random_swap(solution)
 
-limit = max(solution);
+%generate two random indices that are not 0 to swap
+solSize = size(solution, 2);
 
-swapPoints = randperm(limit);
+swapIndices = randperm(solSize);
+swapPoints = solution(swapIndices);
 swapPoints = swapPoints(1:2);
+while any(find(swapPoints == 0))
+    swapIndices = randperm(solSize);
+    swapPoints = solution(swapIndices);
+    swapPoints = swapPoints(1:2);
+end
 
-nextSolution = swap(solution, swapPoints(1), swapPoints(2));
+nextSolution = swap(solution, swapIndices(1), swapIndices(2));
 
 end

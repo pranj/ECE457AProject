@@ -3,11 +3,9 @@
 
 function [nextSolution] = swap(solution, point1, point2)
 
-idx1 = solution == point1;
-idx2 = solution == point2;
-
-solution(idx1) = point2;
-solution(idx2) = point1;
+tmp = solution(point1);
+solution(point1) = solution(point2);
+solution(point2) = tmp;
 
 nextSolution = solution;
 

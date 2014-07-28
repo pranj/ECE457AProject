@@ -15,7 +15,11 @@ LastTemperatureUpdate = 0;
 
 iteration = 1;
 while CurrentTemperature > FinalTemperature
-    Neighbour = random_swap(CurrentSoln);
+    Neighbour = random_neighbour(CurrentSoln);
+    while ~any(Neighbour)
+        Neighbour = random_neighbour(CurrentSoln);
+    end
+        
     NeighbourCost = calculate_cost(Neighbour, Costs, Costs(end, :));
     CostDifference = NeighbourCost - CurrentSolnCost;
 

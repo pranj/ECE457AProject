@@ -9,6 +9,9 @@ function [currentTemp] = calculate_init_temp(costs, initialSol)
     
     while (totalWorstSelected/totalWorst > 0.55 || totalWorst == 0)
         nextSolution = random_neighbour(currentSolution);
+        while ~any(nextSolution)
+            nextSolution = random_neighbour(currentSolution);
+        end
         nextCost = calculate_cost(nextSolution, costs, costs(end, :));
         
         costDiff = nextCost - currentCost;

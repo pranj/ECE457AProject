@@ -20,7 +20,7 @@ if removedIdx < size(solution, 2)
 end
 
 %set insert locations
-tempSol = zeros(1, 2*size(solution, 2) - numRcvrs);
+tempSol = zeros(1, size(solution(solution > 0), 2) - 2 + numRcvrs);
 
 if solution(1) == removedPoint
     tempSolIdx = 1;

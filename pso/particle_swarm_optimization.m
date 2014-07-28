@@ -28,7 +28,6 @@ function [GlobalBestSolution, GlobalBestCost] = particle_swarm_optimization( ...
             GlobalBestSolution = Particles(IterationBestParticle, :);
         end
 
-
         for particle = 1:NumParticles
             ParticleSolution = Particles(particle, :);
             ParticleVelocity = calculate_velocity_size(VMax, IterationParticleCosts(particle), IterationWorstParticleCost);
@@ -37,6 +36,7 @@ function [GlobalBestSolution, GlobalBestCost] = particle_swarm_optimization( ...
             for i = 1:ParticleVelocity
                 NextParticleSolution = random_swap(NextParticleSolution);
             end
+
             Particles(particle, :) = NextParticleSolution;
         end
     end

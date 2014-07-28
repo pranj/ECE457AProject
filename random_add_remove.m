@@ -11,7 +11,7 @@ while ~solution(removeIdx)
 end
 
 removePoint = solution(removeIdx);
-insertIdx = randi(size(solution, 2));
+insertIdx = randi(size(solution, 2) - 1);
 
 nextSolution = add_remove(solution, removePoint, insertIdx);
 

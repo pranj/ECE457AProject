@@ -2,6 +2,15 @@ function [LowestCostPath, LowestCostSoFar] = ...
     ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, ...
                             NumAnts, InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
 
+ NumIterations
+ NumPoints
+ NumReceivers
+NumAnts
+ InitialPheromone
+ Alpha
+Beta
+EvaporationRate
+ Ro
 [AugmentedCostMatrix, NumArtificialPoints] = augment_cost_matrix(Costs, NumPoints, NumReceivers);
 
 FirstDepot = NumPoints + 1;
@@ -35,8 +44,12 @@ for iteration = 1:NumIterations
                 CurrentPath(iCurrentPoint + 1) = UnvisitedNeighbours(MaxIdx);
             else
                 TotalWeight = sum(P);
-                for idx = 1:numel(UnvisitedNeighbours)
-                    P(idx) = P(idx) / TotalWeight;
+                if TotalWeight == 0
+                    P = ones(1, size(UnvisitedNeighbours, 2));
+                else
+                    for idx = 1:numel(UnvisitedNeighbours)
+                        P(idx) = P(idx) / TotalWeight;
+                    end
                 end
 
                 RouletteWheel = cumsum(P);

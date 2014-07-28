@@ -41,6 +41,7 @@ function [GlobalBestSolution, GlobalBestCost] = particle_swarm_optimization( ...
             for i = 1:ParticleVelocity
                 NextParticleSolution = random_neighbour(NextParticleSolution);
             end
+
             Particles(particle, :) = NextParticleSolution;
         end
     end

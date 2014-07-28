@@ -5,37 +5,41 @@ function [GlobalBestSolution, GlobalBestCost] = particle_swarm_optimization( ...
     GlobalBestCost = Inf;
     GlobalBestSolution = zeros(1, SolutionSize);
 
+    % Initialization
     Particles = zeros(NumParticles, SolutionSize);
     for particle = 1:NumParticles
         ParticleSolution = gen_initial_solution(NumPoints, NumReceivers);
         Particles(particle, :) = ParticleSolution;
     end
-
-
+    
+    % Iterate until we hit the max number of iterations
     for iteration = 1:NumIterations
         IterationParticleCosts = Inf * ones(1, NumParticles);
-
+    
+        % Calculate the Fitness of each of the particles
         for particle = 1:NumParticles
             ParticleSolution = Particles(particle, :);
             IterationParticleCosts(particle) = calculate_cost(ParticleSolution, Costs, Costs(end, :));
         end
-
+        
+        % Get the local best and local worst
         [IterationBestParticleCost, IterationBestParticle] = min(IterationParticleCosts);
         IterationWorstParticleCost = max(IterationParticleCosts);
-
+        
+        % Replace global best if there is one
         if IterationBestParticleCost < GlobalBestCost
             GlobalBestCost = IterationBestParticleCost;
             GlobalBestSolution = Particles(IterationBestParticle, :);
         end
 
-
+        % Calculate velocity and next position
         for particle = 1:NumParticles
             ParticleSolution = Particles(particle, :);
             ParticleVelocity = calculate_velocity_size(VMax, IterationParticleCosts(particle), IterationWorstParticleCost);
 
             NextParticleSolution = ParticleSolution;
             for i = 1:ParticleVelocity
-                NextParticleSolution = random_swap(NextParticleSolution);
+                NextParticleSolution = random_neighbour(NextParticleSolution);
             end
             Particles(particle, :) = NextParticleSolution;
         end

@@ -1,5 +1,5 @@
 function [BestSolutionSoFar, BestCostSoFar] = ga(Costs, NumIterations, PopulationSize, CrossoverProbablity, ...
-                 MutationProbablity, NumPoints, NumReceivers, SP)
+                 MutationProbablity, NumPoints, NumReceivers)
     SolutionSize = NumPoints + NumReceivers - 1;
     DepotCosts = Costs(end, :);
 
@@ -38,7 +38,7 @@ function [Offspring] = crossover(Population, PotentialParents, CrossoverProbabli
     for parentIdx = 1:NumActualParents
         Parent1 = Population(PotentialPairings(ParentIndices(parentIdx), 1), :);
         Parent2 = Population(PotentialPairings(ParentIndices(parentIdx), 2), :);
-        [Offspring1, Offspring2] = cycle_crossover(Parent1, Parent2);
+        [Offspring1, Offspring2] = order1_crossover(Parent1, Parent2);
         Offspring(parentIdx * 2, :) = Offspring1;
         Offspring((parentIdx * 2) - 1, :) = Offspring2;
     end

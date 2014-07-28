@@ -1,16 +1,7 @@
 function [LowestCostPath, LowestCostSoFar] = ...
-    ant_colony_optimization(Costs, NumIterations, NumPoints, NumReceivers, ...
+    ant_colony_optimization(Costs, MaxIterationsWithoutChange, NumPoints, NumReceivers, ...
                             NumAnts, InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
 
- NumIterations
- NumPoints
- NumReceivers
-NumAnts
- InitialPheromone
- Alpha
-Beta
-EvaporationRate
- Ro
 [AugmentedCostMatrix, NumArtificialPoints] = augment_cost_matrix(Costs, NumPoints, NumReceivers);
 
 FirstDepot = NumPoints + 1;
@@ -20,7 +11,11 @@ PheromoneConcentration = InitialPheromone * ones(size(AugmentedCostMatrix));
 LowestCostSoFar = Inf;
 LowestCostPath = zeros(1, NumArtificialPoints);
 
-for iteration = 1:NumIterations
+
+CurrentIteration = 1;
+LastChangeIteration = 1;
+
+while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
     N = ones(NumAnts, NumArtificialPoints);
     IterationLowestCostSoFar = Inf;
     IterationLowestCostPath = zeros(1, NumArtificialPoints);
@@ -73,6 +68,7 @@ for iteration = 1:NumIterations
         if CurrentCost < LowestCostSoFar
             LowestCostPath = CurrentPath;
             LowestCostSoFar = CurrentCost;
+            LastChangeIteration = CurrentIteration;
         end
     end
 
@@ -81,6 +77,8 @@ for iteration = 1:NumIterations
     for idx = 1:numel(IterationLowestCostPath) - 1
         PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) += PheromoneDeposit;
     end
+
+    CurrentIteration += 1;
 end
 
 LowestCostPath = normalize_path(LowestCostPath, NumPoints);

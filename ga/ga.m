@@ -1,4 +1,4 @@
-function [BestSolutionSoFar, BestCostSoFar] = ga(Costs, NumIterations, PopulationSize, CrossoverProbablity, ...
+function [BestSolutionSoFar, BestCostSoFar, Debug] = ga(Costs, NumIterations, PopulationSize, CrossoverProbablity, ...
                  MutationProbablity, NumPoints, NumReceivers)
     SolutionSize = NumPoints + NumReceivers - 1;
     DepotCosts = Costs(end, :);
@@ -15,8 +15,12 @@ function [BestSolutionSoFar, BestCostSoFar] = ga(Costs, NumIterations, Populatio
     for iteration = 1:NumIterations
         [PopulationBestSoln, PopulationBestCost] = best_soln_in_population(Population, Costs, DepotCosts);
 	Debug(iteration) = PopulationBestCost;
-	plot(Debug)
-	drawnow
+
+	% only draw every 5 iterations
+	if mod(iteration, 5) == 0
+		plot(Debug)
+		drawnow
+	end
         
         CrossoverOffspring = crossover(Population, 1:PopulationSize, CrossoverProbablity);
         MutationOffspring = mutation(Population, MutationProbablity);

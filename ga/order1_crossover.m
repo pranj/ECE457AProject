@@ -1,7 +1,11 @@
 function [Child1 Child2] = order1_crossover(Parent1, Parent2)
     ChromosomeLength = size(Parent1, 2);
 
-    PossibleIntervals = nchoosek(1:ChromosomeLength, 2);
+    % we don't want the full parent to be chosen
+    % so we union 1:end-1 and 2:end 
+    PossibleIntervals = nchoosek(1:ChromosomeLength-1, 2);
+    PossibleIntervals = union(PossibleIntervals, nchoosek(2:ChromosomeLength, 2), 'rows');
+
     NumPossibleIntervals =  size(PossibleIntervals, 1);
     ChosenIndex = fix((NumPossibleIntervals - 1)*rand(1,1) + 1);
     ChosenInterval = PossibleIntervals(ChosenIndex, :);
@@ -12,7 +16,6 @@ function [Child1 Child2] = order1_crossover(Parent1, Parent2)
     Child2 = child(Parent2, Parent1, ChromosomeLength, ChosenInterval);
     Child1 = unalias(Child1);
     Child2 = unalias(Child2);
-
 end
 
 function [Parent] = alias(Parent) 

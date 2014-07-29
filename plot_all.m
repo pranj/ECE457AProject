@@ -1,3 +1,8 @@
+colours = ['r' 'g' 'b' 'o' 'p'];
+phandle = [];
+idx = 1;
+out = [];
+
 [~,best, out] = ga(costs, 100, 20, .9, .1, 51, 2)
 [~,best2, out2] = ga(costs, 100, 20, .87, .91, 51, 2)
 phandle(1) = plot(out, colours(1), 'LineWidth', 2)

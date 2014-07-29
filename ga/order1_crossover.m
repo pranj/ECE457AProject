@@ -6,11 +6,32 @@ function [Child1 Child2] = order1_crossover(Parent1, Parent2)
     ChosenIndex = fix((NumPossibleIntervals - 1)*rand(1,1) + 1);
     ChosenInterval = PossibleIntervals(ChosenIndex, :);
 
-    	Child1 = child(Parent1, Parent2, ChromosomeLength, ChosenInterval);
-    	Child2 = child(Parent2, Parent1, ChromosomeLength, ChosenInterval);
+    Parent1 = alias(Parent1);
+    Parent2 = alias(Parent2);
+    Child1 = child(Parent1, Parent2, ChromosomeLength, ChosenInterval);
+    Child2 = child(Parent2, Parent1, ChromosomeLength, ChosenInterval);
+    Child1 = unalias(Child1);
+    Child2 = unalias(Child2);
 
 end
 
+function [Parent] = alias(Parent) 
+	idx = -1;
+	for i = 1:size(Parent, 2)
+		if(Parent(i) == 0)
+			Parent(i) = idx;
+			idx = idx - 1;
+		end
+	end
+end
+
+function [Child] = unalias(Child)
+	for i = 1:size(Child, 2)
+		if(Child(i) < 0)
+			Child(i) = 0;
+		end
+	end
+end
 
 function [Child] = child(Parent1, Parent2, ChromosomeLength, ChosenInterval)
     Child = zeros(1, ChromosomeLength);

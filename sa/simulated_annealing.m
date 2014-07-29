@@ -12,6 +12,8 @@ CurrentSolnCost = calculate_cost(CurrentSoln, Costs, Costs(end, :));
 CurrentTemperature = InitialTemperature;
 LastTemperatureUpdate = 0;
 
+plot_points = zeros(50, 1);
+
 iteration = 1;
 while CurrentTemperature > FinalTemperature
     Neighbour = random_neighbour(CurrentSoln);
@@ -38,7 +40,11 @@ while CurrentTemperature > FinalTemperature
         GlobalBestCost = CurrentSolnCost;
         GlobalBestSolution = CurrentSoln;
     end
-
+    
+    plot_points(iteration) = GlobalBestCost;
+    plot(plot_points)
+    drawnow
+    
     IterationsSinceLastUpdate = iteration - LastTemperatureUpdate;
     if IterationsSinceLastUpdate >= IterationsPerTemperature
         NumberOfUpdates = iteration / IterationsPerTemperature;

@@ -15,6 +15,8 @@ LowestCostPath = zeros(1, NumArtificialPoints);
 CurrentIteration = 1;
 LastChangeIteration = 1;
 
+plot_points = zeros(50, 1);
+
 while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
     N = ones(NumAnts, NumArtificialPoints);
     IterationLowestCostSoFar = Inf;
@@ -70,6 +72,10 @@ while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
             LowestCostSoFar = CurrentCost;
             LastChangeIteration = CurrentIteration;
         end
+        
+        plot_points(CurrentIteration) = LowestCostSoFar;
+        plot(plot_points)
+        drawnow
     end
 
     PheromoneConcentration = PheromoneConcentration * (1 - EvaporationRate);

@@ -1,20 +1,20 @@
 
 function [costs] = run_ga(CostData)
-    costs = zeros(5, 4);
+    costs = zeros(5, 2);
     
-    NumIterations = 150;
-    PopulationSize = 5;
-    CrossoverProbability = 0.6;
-    MutationProbability = 0.05;
+    NumIterations = 200;
+    PopulationSize = 20;
+    CrossoverProbability = 0.75;
+    MutationProbability = 0.65;
     
     NumReceivers = 5;
     NumPoints = 51;
     
-    params = [NumIterations PopulationSize CrossoverProbability MutationProbability];
-    change = [70 8 0.07 0.17];
+    params = [MutationProbability CrossoverProbability];
+    change = [0.05 0.04];
     
-    NumOfRuns = 10;
-    for i = 1:4
+    NumOfRuns = 2;
+    for i = 1:2
         for k = 1:5
             total = 0;
             cost = 0;

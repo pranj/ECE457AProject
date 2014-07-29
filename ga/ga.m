@@ -2,6 +2,7 @@ function [BestSolutionSoFar, BestCostSoFar] = ga(Costs, NumIterations, Populatio
                  MutationProbablity, NumPoints, NumReceivers)
     SolutionSize = NumPoints + NumReceivers - 1;
     DepotCosts = Costs(end, :);
+    Debug = zeros(NumIterations, 1);
 
     Population = zeros(PopulationSize, SolutionSize);
     for idx = 1:PopulationSize
@@ -13,6 +14,7 @@ function [BestSolutionSoFar, BestCostSoFar] = ga(Costs, NumIterations, Populatio
 
     for iteration = 1:NumIterations
         [PolationBestSoln, PolationBestCost] = best_soln_in_population(Population, Costs, DepotCosts);
+	Debug(iteration) = PolationBestCost;
         if PolationBestCost < BestCostSoFar
             BestCostSoFar = PolationBestCost;
             BestSolutionSoFar = PolationBestSoln;
@@ -21,9 +23,10 @@ function [BestSolutionSoFar, BestCostSoFar] = ga(Costs, NumIterations, Populatio
         CrossoverOffspring = crossover(Population, 1:PopulationSize, CrossoverProbablity);
         MutationOffspring = mutation(Population, MutationProbablity);
 
-        Everyone = [Population; CrossoverOffspring; MutationOffspring];
-        Population = selection(Everyone, PopulationSize, Costs, DepotCosts);
+        Everyone = [Population; CrossoverOffspring; MutationOffspring; BestSolutionSoFar];
+        Population = selection2(Everyone, PopulationSize, Costs, DepotCosts);
     end
+    plot(Debug)
 end
 
 function [Offspring] = crossover(Population, PotentialParents, CrossoverProbablity)
@@ -81,6 +84,20 @@ function [NewPopulation] = selection(Everyone, PopulationSize, Costs, DepotCosts
                 break;
             end
         end
+    end
+end
+
+function [NewPopulation] = selection2(Everyone, PopulationSize, Costs, DepotCosts)
+    [EveryoneSize, SolutionSize] = size(Everyone);
+    Fitness = zeros(EveryoneSize, 2);
+    for idx = 1:EveryoneSize
+        Cost = calculate_cost(Everyone(idx, :), Costs, DepotCosts);
+        Fitness(idx, :) = [Cost idx];
+    end
+    Fitness = sortrows(Fitness, 1);
+    NewPopulation = zeros(PopulationSize, SolutionSize);
+    for idx = 1:PopulationSize
+        NewPopulation(idx, :) = Everyone(Fitness(idx, 2), :);
     end
 end
 

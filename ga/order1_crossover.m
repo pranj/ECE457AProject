@@ -5,10 +5,9 @@ function [Child1 Child2] = order1_crossover(Parent1, Parent2)
     NumPossibleIntervals =  size(PossibleIntervals, 1);
     ChosenIndex = fix((NumPossibleIntervals - 1)*rand(1,1) + 1);
     ChosenInterval = PossibleIntervals(ChosenIndex, :);
-    ChosenInterval
 
-    Child1 = child(Parent1, Parent2, ChromosomeLength, ChosenInterval);
-    Child2 = child(Parent2, Parent1, ChromosomeLength, ChosenInterval);
+    	Child1 = child(Parent1, Parent2, ChromosomeLength, ChosenInterval);
+    	Child2 = child(Parent2, Parent1, ChromosomeLength, ChosenInterval);
 
 end
 
@@ -25,7 +24,7 @@ function [Child] = child(Parent1, Parent2, ChromosomeLength, ChosenInterval)
     for i = 1:ChromosomeLength
         if i < ChosenInterval(1) || i > ChosenInterval(2)
             Child(i) = Parent2(X(WriteIdx));
-            WriteIdx += 1;
+            WriteIdx = WriteIdx + 1;
         end
     end
 end

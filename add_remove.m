@@ -2,6 +2,10 @@
 % remove and randomly selecting another location (before 1, after 2) to
 % insert it.
 
+% WARNING PLEASE CHECK FOR 0 WHEN CALLING THIS FUNCTION
+% RANDOM_ADD_REMOVE CAN RETURN 0 IF ADJACENT POINTS ARE CALLED
+% Use while ~any(add_remove...)
+
 function [nextSolution] = add_remove(solution, removedPoint, insertIdx)
 numRcvrs = sum(solution == 0) + 1;
 
@@ -20,7 +24,7 @@ if removedIdx < size(solution, 2)
 end
 
 %set insert locations
-tempSol = zeros(1, 2*size(solution, 2) - numRcvrs);
+tempSol = zeros(1, size(solution(solution > 0), 2) - 2 + numRcvrs);
 
 if solution(1) == removedPoint
     tempSolIdx = 1;

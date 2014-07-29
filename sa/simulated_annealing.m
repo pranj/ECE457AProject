@@ -1,6 +1,8 @@
 function [GlobalBestSolution, GlobalBestCost] = simulated_annealing( ...
-                    Costs, Alpha, InitialTemperature, IterationsPerTemperature, FinalTemperature, ...
-                    InitialSoln)
+                    Costs, InitialSoln, Alpha, InitProb, ...
+                    FinalTemperature, IterationsPerTemperature)
+                
+InitialTemperature = calculate_init_temp(Costs, InitProb);
 GlobalBestCost = calculate_cost(InitialSoln, Costs, Costs(end, :));
 GlobalBestSolution = InitialSoln;
 

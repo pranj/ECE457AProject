@@ -15,7 +15,7 @@ for x = 1:numPoints
 end
 
 for x = 1:numPoints
-    for y = 1:numPoints
+    for y = 1:numPoints-1
         toAdd = add_remove(solution, x, y);
         if any(toAdd)
             neighbourhood(neighbourIdx, 1:end-3) = toAdd;
@@ -26,8 +26,7 @@ for x = 1:numPoints
 end
 
 neighbourhood = unique(neighbourhood, 'rows');
+neighbourhood( ~any(neighbourhood, 2), :) = [];
 neighbours = neighbourhood(:, 1:end-3);
-neighbours( ~any(neighbours, 2), :) = [];
 method = neighbourhood(:, end-2:end);
-
 end

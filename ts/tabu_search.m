@@ -1,7 +1,7 @@
 function [globalBestSol, globalBestCost, plot_points] = tabu_search( ...
             costs, tabuLength, numRcvr, MaxIterationsWithoutChange, initialSol)
 
-numPoints = size(initialSol, 2) - numRcvr + 1;
+numPoints = size(initialSol, 2) - (numRcvr - 1);
 swap_tabu = zeros(numPoints, numPoints);
 insert_tabu = zeros(numPoints + numRcvr - 1, numPoints + numRcvr - 1);
 
@@ -13,7 +13,7 @@ globalBestCost = calculate_cost(initialSol, costs, costs(end, :));
 noimprovement_count = 0;
 
 plot_points = zeros(50, 1);
-
+iteration = 1;
 while noimprovement_count < MaxIterationsWithoutChange
     % Get the best solution in the neighbourhood of the current solution
     % Avoid Tabu moves, consider aspiration criteria
@@ -27,13 +27,14 @@ while noimprovement_count < MaxIterationsWithoutChange
             % check swap tabu
             point1 = method(k, 2);
             point2 = method(k, 3);
-            if swap_tabu(point1, point2) > 0
+            if swap_tabu(point1, point2) || swap_tabu(point2, point1) > 0
                 %aspiration
                 if neighbourCost < globalBestCost
                     bestNeighbourCost = neighbourCost;
                     bestNeighbour = neighbours(k, :);
+                    bestNeighbourIdx = k;
                 else
-                    continue
+                    continue;
                 end
             end
             
@@ -46,8 +47,9 @@ while noimprovement_count < MaxIterationsWithoutChange
                 if neighbourCost < globalBestCost
                     bestNeighbourCost = neighbourCost;
                     bestNeighbour = neighbours(k, :);
+                    bestNeighbourIdx = k;
                 else
-                    continue
+                    continue;
                 end
             end
         end
@@ -59,12 +61,17 @@ while noimprovement_count < MaxIterationsWithoutChange
         end
     end
     
+    swap_tabu(find(swap_tabu)) = swap_tabu(find(swap_tabu)) - 1;
+    swap_tabu(swap_tabu < 0) = 0;
+    insert_tabu(find(insert_tabu)) = insert_tabu(find(insert_tabu)) - 1;
+    insert_tabu(insert_tabu < 0) = 0;
+    
     % tabu best neighbour method
     if method(bestNeighbourIdx, 1) == 0
         point1 = method(bestNeighbourIdx, 2);
         point2 = method(bestNeighbourIdx, 3);
         swap_tabu(point1, point2) = tabuLength;
-    elseif method(bestNeighbourIdx, 2) == 0
+    elseif method(bestNeighbourIdx, 1) == 1
         removePoint = method(bestNeighbourIdx, 2);
         insertIdx = method(bestNeighbourIdx, 3);
         insert_tabu(removePoint, insertIdx) = tabuLength;
@@ -75,21 +82,20 @@ while noimprovement_count < MaxIterationsWithoutChange
         globalBestSol = bestNeighbour;
         noimprovement_count = 0;
     end
-    
-    disp(globalBestCost);
-    plot_points(i) = globalBestCost;
-    %plot(plot_points)
-    %drawnow
+
+    %disp(globalBestCost);
+    plot_points(iteration) = globalBestCost;
+    plot(plot_points)
+    drawnow
     
     currentSol = bestNeighbour;
     noimprovement_count = noimprovement_count + 1;
-    
-    disp('Solution Path:');
-    disp(globalBestSol)
-    disp('Cost for solution:');
-    disp(globalBestCost);
-    disp('Iterations to converge:')
-    disp(iteration);
-    disp('Mean time per iteration:');
-    disp(mean(timestamps));
+    iteration = iteration + 1;
 end
+
+%disp('Solution Path:');
+%disp(globalBestSol)
+%disp('Cost for solution:');
+%disp(globalBestCost);
+%disp('Iterations to converge:')
+%disp(iteration);

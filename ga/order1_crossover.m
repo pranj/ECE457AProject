@@ -19,19 +19,19 @@ function [Child1 Child2] = order1_crossover(Parent1, Parent2)
 end
 
 function [Parent] = alias(Parent) 
-	idx = -1;
-	for i = 1:size(Parent, 2)
-		if(Parent(i) == 0)
-			Parent(i) = idx;
-			idx = idx - 1;
+	count = -1;
+	for idx = 1:size(Parent, 2)
+		if(Parent(idx) == 0)
+			Parent(idx) = idx;
+			count = count - 1;
 		end
 	end
 end
 
 function [Child] = unalias(Child)
-	for i = 1:size(Child, 2)
-		if(Child(i) < 0)
-			Child(i) = 0;
+	for idx = 1:size(Child, 2)
+		if(Child(idx) < 0)
+			Child(idx) = 0;
 		end
 	end
 end

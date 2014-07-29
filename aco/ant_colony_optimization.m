@@ -1,4 +1,4 @@
-function [LowestCostPath, LowestCostSoFar] = ...
+function [LowestCostPath, LowestCostSoFar, plot_points] = ...
     ant_colony_optimization(Costs, MaxIterationsWithoutChange, NumPoints, NumReceivers, ...
                             NumAnts, InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
 
@@ -74,8 +74,8 @@ while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
         end
         
         plot_points(CurrentIteration) = LowestCostSoFar;
-        plot(plot_points)
-        drawnow
+        %plot(plot_points)
+        %drawnow
     end
 
     PheromoneConcentration = PheromoneConcentration * (1 - EvaporationRate);

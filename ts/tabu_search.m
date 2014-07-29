@@ -1,4 +1,4 @@
-function [globalBestSol, globalBestCost] = tabu_search( ...
+function [globalBestSol, globalBestCost, plot_points] = tabu_search( ...
             costs, tabuLength, numRcvr, MaxIterationsWithoutChange, initialSol)
 
 numPoints = size(initialSol, 2) - numRcvr + 1;
@@ -78,12 +78,18 @@ while noimprovement_count < MaxIterationsWithoutChange
     
     disp(globalBestCost);
     plot_points(i) = globalBestCost;
-    plot(plot_points)
-    drawnow
+    %plot(plot_points)
+    %drawnow
     
     currentSol = bestNeighbour;
     noimprovement_count = noimprovement_count + 1;
     
-end
-        
+    disp('Solution Path:');
+    disp(globalBestSol)
+    disp('Cost for solution:');
+    disp(globalBestCost);
+    disp('Iterations to converge:')
+    disp(iteration);
+    disp('Mean time per iteration:');
+    disp(mean(timestamps));
 end

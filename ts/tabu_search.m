@@ -14,7 +14,11 @@ noimprovement_count = 0;
 
 plot_points = zeros(50, 1);
 
+iteration = 1;
+timestamps = zeros(10, 1);
+
 while noimprovement_count < MaxIterationsWithoutChange
+    tic
     % Get the best solution in the neighbourhood of the current solution
     % Avoid Tabu moves, consider aspiration criteria
     [neighbours method] = get_neighbours(currentSol);
@@ -84,6 +88,15 @@ while noimprovement_count < MaxIterationsWithoutChange
     currentSol = bestNeighbour;
     noimprovement_count = noimprovement_count + 1;
     
+    iteration = iteration + 1;
+    timestamps(iteration) = toc;
 end
-        
+    disp('Solution Path:');
+    disp(globalBestSol)
+    disp('Cost for solution:');
+    disp(globalBestCost);
+    disp('Iterations to converge:')
+    disp(iteration);
+    disp('Mean time per iteration:');
+    disp(mean(timestamps));
 end

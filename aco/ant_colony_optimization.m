@@ -16,8 +16,10 @@ CurrentIteration = 1;
 LastChangeIteration = 1;
 
 plot_points = zeros(50, 1);
+timestamps = zeros(10, 1);
 
 while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
+    tic
     N = ones(NumAnts, NumArtificialPoints);
     IterationLowestCostSoFar = Inf;
     IterationLowestCostPath = zeros(1, NumArtificialPoints);
@@ -84,11 +86,20 @@ while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
         PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) = ...
             PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) + PheromoneDeposit;
     end
-
+    
+    timestamps(CurrentIteration) = toc;
     CurrentIteration = CurrentIteration + 1;
 end
 
 LowestCostPath = normalize_path(LowestCostPath, NumPoints);
+disp('Solution Path:');
+disp(LowestCostPath)
+disp('Cost for solution:');
+disp(LowestCostSoFar);
+disp('Iterations to converge:')
+disp(CurrentIteration);
+disp('Mean time for iterations:');
+disp(mean(timestamps));
 end
 
 function [NormalizedPath] = normalize_path(Path, NumPoints)

@@ -75,10 +75,11 @@ while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
     PheromoneConcentration = PheromoneConcentration * (1 - EvaporationRate);
     PheromoneDeposit = 1 / IterationLowestCostSoFar;
     for idx = 1:numel(IterationLowestCostPath) - 1
-        PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) += PheromoneDeposit;
+        PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) = ...
+            PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) + PheromoneDeposit;
     end
 
-    CurrentIteration += 1;
+    CurrentIteration = CurrentIteration + 1;
 end
 
 LowestCostPath = normalize_path(LowestCostPath, NumPoints);

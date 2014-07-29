@@ -1,3 +1,4 @@
+
 function [costs] = run_ga(CostData)
     costs = zeros(5, 4);
     
@@ -13,7 +14,7 @@ function [costs] = run_ga(CostData)
     change = [70 8 0.07 0.17];
     
     NumOfRuns = 10;
-    for i = 1:3
+    for i = 1:4
         for k = 1:5
             total = 0;
             cost = 0;

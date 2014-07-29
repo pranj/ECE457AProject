@@ -1,17 +1,19 @@
 function [GlobalBest, GlobalBestCost] = new_pso( ...
-                Costs, NumIterations, NumParticles, NumPoints, NumReceivers)
+                Costs, NumIterations, NumParticles, ...
+                NumPoints, NumReceivers, ...
+                inertiaWeight, cognitiveAccel, socialAccel)
     SolutionSize = NumPoints + NumReceivers - 1;
     maxVelocity = 50;
 
-    % initialize particle position/solution and initial velocity (which can
-    % be tuned)
+    % initialize particle position/solution
     ParticlePosition = zeros(NumParticles, SolutionSize);
     ParticleBest = zeros(NumParticles, SolutionSize);
     ParticleBestCost = zeros(1, NumParticles);
+    
     % 3D matrix of velocity swap sets
     ParticleVelocity = zeros(NumParticles, 2, maxVelocity);
     for particle = 1:NumParticles
-        ParticleSolution = gen_initial_solution(NumPoints, NumReceivers);
+        ParticleSolution = pso_initial_solution(NumPoints, NumReceivers);
         
         ParticlePosition(particle, :) = ParticleSolution;
         ParticleBest(particle, :) = ParticlePosition(particle, :); 
@@ -24,8 +26,6 @@ function [GlobalBest, GlobalBestCost] = new_pso( ...
 
     % perform PSO
     for iteration = 1:NumIterations
-
-        % move each particle
         for particle = 1:NumParticles
             % update particle velocity
             vInertia = 1*squeeze(ParticleVelocity(particle, :, :))';
@@ -34,10 +34,23 @@ function [GlobalBest, GlobalBestCost] = new_pso( ...
             else
                 vInertia(~any(vInertia, 2), :) = [];
             end
-            vCognitive = 1*1*calculate_velocity(ParticleBest(particle, :), ParticlePosition(particle, :));
-            vSocial = 1*1*calculate_velocity(GlobalBest, ParticlePosition(particle, :));
             
-            nextVelocity = [vInertia' vCognitive' vSocial']';
+            vCognitive = calculate_velocity(ParticleBest(particle, :), ParticlePosition(particle, :));
+            vSocial = calculate_velocity(GlobalBest, ParticlePosition(particle, :));
+            
+            rCognitive = rand;
+            rSocial = rand;
+            
+            % ceiling up to next 0.5 multiple
+            cogCoeff = cognitiveAccel * rCognitive;
+            socCoeff = socialAccel * rSocial;
+            
+            % how many of each velocity set to apply
+            inertiaCount = floor(inertiaWeight * size(vInertia, 1));
+            cogCount = floor(cogCoeff * size(vCognitive, 1));
+            socCount = floor(socCoeff * size(vSocial, 1));
+            
+            nextVelocity = calculate_next_velocity(inertiaCount, vInertia, cogCount, vCognitive, socCount, vSocial);
             
             % update particle position
             ParticlePosition(particle, :) = update_position(ParticlePosition(particle, :), nextVelocity);
@@ -52,7 +65,6 @@ function [GlobalBest, GlobalBestCost] = new_pso( ...
             % update global best
             if newCost < GlobalBestCost
                 GlobalBestCost = newCost;
-                GlobalBestParticle = particle;
                 GlobalBest = ParticlePosition(particle, :);
             end
             
@@ -91,4 +103,46 @@ if ~isequal(current, best)
 else
     velocity = [];
 end
+end
+
+function [nextVelocity] = calculate_next_velocity(w, vInertia, c1r1, vCog, c2r2, vSoc)
+    if any([w c1r1 c2r2])
+        velocityIndex = 1;
+        nextVelocity = zeros(w + c1r1 + c2r2, 2);
+        for v = 1:w
+            if size(vInertia, 1) == 1
+                truV = 1;
+            elseif v ~= size(vInertia, 1)
+                truV = mod(v, size(vInertia, 1));
+            else
+                truV = v;
+            end
+            nextVelocity(velocityIndex, :) = vInertia(truV, :);
+            velocityIndex = velocityIndex + 1;
+        end
+        for v = 1:c1r1
+            if size(vCog, 1) == 1
+                truV = 1;
+            elseif v ~= size(vCog, 1)
+                truV = mod(v, size(vCog, 1));
+            else
+                truV = v;
+            end
+            nextVelocity(velocityIndex, :) = vCog(truV, :);
+            velocityIndex = velocityIndex + 1;
+        end
+        for v = 1:c2r2
+            if size(vSoc, 1) == 1
+                truV = 1;
+            elseif v ~= size(vSoc, 1)
+                truV = mod(v, size(vSoc, 1));
+            else
+                truV = v;
+            end
+            nextVelocity(velocityIndex, :) = vSoc(truV, :);
+            velocityIndex = velocityIndex + 1;
+        end
+    else
+        nextVelocity = [];
+    end
 end

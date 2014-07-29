@@ -1,19 +1,21 @@
-function [ final_solutions, tabu_lengths ] = runTabuMetrics( costs, start_point, end_point, intial_sol )
+function [ final_solutions, tabu_lengths, converge_times ] = runTabuMetrics( costs, intial_sol )
     receivers = 4;
-    iterations = 50;
     
-    final_solutions = zeros(1, end_point - start_point + 1);
-    tabu_lengths = zeros(1, end_point - start_point + 1);
+    final_solutions = zeros(1, 11);
+    converge_times = zeros(1, 11);
+    tabu_lengths = zeros(1, 11);
     
-    for n = start_point:5:end_point
-        trials = zeros(1,3);
-        for k = 1:3
-            [matrix, sol] = tabu_search(costs, n, iterations, receivers, intial_sol);
-            trials(k) = sol;  
+    for n = 0:5:50
+        [matrix, sol] = tabu_search(costs, n, receivers, intial_sol);
+        if n == 0
+            final_solutions(1) = sol;
+            tabu_lengths(1) = sol;
+            converge_times(1) = time;
+        else
+            final_solutions(n) = sol;
+            tabu_lengths(n) = n;
+            converge_times(n) = time;
         end
-        
-        final_solutions(n) = mean(trials)
-        tabu_lengths(n) = n;
     end
 end
 

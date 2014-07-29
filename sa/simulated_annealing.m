@@ -1,4 +1,4 @@
-function [GlobalBestSolution, GlobalBestCost] = simulated_annealing( ...
+function [GlobalBestSolution, GlobalBestCost, plot_points, iteration] = simulated_annealing( ...
                     Costs, InitialSoln, Alpha, InitProb, ...
                     FinalTemperature, IterationsPerTemperature)
                 
@@ -12,7 +12,7 @@ CurrentSolnCost = calculate_cost(CurrentSoln, Costs, Costs(end, :));
 CurrentTemperature = InitialTemperature;
 LastTemperatureUpdate = 0;
 
-plot_points = zeros(50, 1);
+plot_points = [];
 
 iteration = 1;
 while CurrentTemperature > FinalTemperature
@@ -42,8 +42,8 @@ while CurrentTemperature > FinalTemperature
     end
     
     plot_points(iteration) = GlobalBestCost;
-    plot(plot_points)
-    drawnow
+    %plot(plot_points)
+   % drawnow
     
     IterationsSinceLastUpdate = iteration - LastTemperatureUpdate;
     if IterationsSinceLastUpdate >= IterationsPerTemperature

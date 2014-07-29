@@ -1,9 +1,8 @@
-function [GlobalBest, GlobalBestCost] = new_pso( ...
+function [GlobalBest, GlobalBestCost, plot_points] = new_pso( ...
                 Costs, NumIterations, NumParticles, ...
                 NumPoints, NumReceivers, ...
                 inertiaWeight, cognitiveAccel, socialAccel, maxVelocity)
     SolutionSize = NumPoints + NumReceivers - 1;
-    
     % initialize particle position/solution
     ParticlePosition = zeros(NumParticles, SolutionSize);
     ParticleBest = zeros(NumParticles, SolutionSize);
@@ -40,7 +39,7 @@ function [GlobalBest, GlobalBestCost] = new_pso( ...
     GlobalBest = ParticleBest(GlobalBestParticle, :);
     
     % TEMP
-    %plot_ponts = zeros(50, 1);
+    plot_ponts = [];
     
     % perform PSO
     for iteration = 1:NumIterations
@@ -94,7 +93,7 @@ function [GlobalBest, GlobalBestCost] = new_pso( ...
             end
         end
         
-        %plot_points(iteration) = min(ParticleBestCost);
+        plot_points(iteration) = min(ParticleBestCost);
         %plot(plot_points)
         %drawnow
     end

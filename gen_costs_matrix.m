@@ -1,7 +1,5 @@
 function [costs] = gen_costs_matrix(numPoints, maxDistance)
-graph = triu(randi(maxDistance, numPoints));
-graph = triu(graph, 1) + triu(graph, 1)';
-depotCosts = randi(maxDistance, 1, numPoints);
-
-costs = [graph depotCosts'];
+costs = triu(randi(maxDistance, numPoints));
+costs = triu(costs, 1) + triu(costs, 1)';
+costs(logical(eye(size(costs)))) = Inf;
 end

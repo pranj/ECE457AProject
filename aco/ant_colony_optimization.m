@@ -1,4 +1,4 @@
-function [LowestCostPath, LowestCostSoFar] = ...
+function [LowestCostPath, LowestCostSoFar, plot_points] = ...
     ant_colony_optimization(Costs, MaxIterationsWithoutChange, NumPoints, NumReceivers, ...
                             NumAnts, InitialPheromone, Alpha, Beta, EvaporationRate, Ro)
 
@@ -14,6 +14,8 @@ LowestCostPath = zeros(1, NumArtificialPoints);
 
 CurrentIteration = 1;
 LastChangeIteration = 1;
+
+plot_points = zeros(50, 1);
 
 while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
     N = ones(NumAnts, NumArtificialPoints);
@@ -70,15 +72,20 @@ while CurrentIteration - LastChangeIteration < MaxIterationsWithoutChange
             LowestCostSoFar = CurrentCost;
             LastChangeIteration = CurrentIteration;
         end
+        
+        plot_points(CurrentIteration) = LowestCostSoFar;
+        %plot(plot_points)
+        %drawnow
     end
 
     PheromoneConcentration = PheromoneConcentration * (1 - EvaporationRate);
     PheromoneDeposit = 1 / IterationLowestCostSoFar;
     for idx = 1:numel(IterationLowestCostPath) - 1
-        PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) += PheromoneDeposit;
+        PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) = ...
+            PheromoneConcentration(IterationLowestCostPath(idx), IterationLowestCostPath(idx + 1)) + PheromoneDeposit;
     end
 
-    CurrentIteration += 1;
+    CurrentIteration = CurrentIteration + 1;
 end
 
 LowestCostPath = normalize_path(LowestCostPath, NumPoints);

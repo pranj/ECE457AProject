@@ -1,8 +1,8 @@
-function [BestSolutionSoFar, BestCostSoFar] = ga(Costs, NumIterations, PopulationSize, CrossoverProbablity, ...
+function [BestSolutionSoFar, BestCostSoFar, plot_points] = ga(Costs, NumIterations, PopulationSize, CrossoverProbablity, ...
                  MutationProbablity, NumPoints, NumReceivers)
     SolutionSize = NumPoints + NumReceivers - 1;
     DepotCosts = Costs(end, :);
-    Debug = zeros(NumIterations, 1);
+    plot_points = [];
 
     Population = zeros(PopulationSize, SolutionSize);
     for idx = 1:PopulationSize
@@ -13,20 +13,18 @@ function [BestSolutionSoFar, BestCostSoFar] = ga(Costs, NumIterations, Populatio
     BestSolutionSoFar = zeros(1, SolutionSize);
 
     for iteration = 1:NumIterations
-        [PolationBestSoln, PolationBestCost] = best_soln_in_population(Population, Costs, DepotCosts);
-	Debug(iteration) = PolationBestCost;
-        if PolationBestCost < BestCostSoFar
-            BestCostSoFar = PolationBestCost;
-            BestSolutionSoFar = PolationBestSoln;
-        end
-
+        [PopulationBestSoln, PopulationBestCost] = best_soln_in_population(Population, Costs, DepotCosts);
+	plot_points(iteration) = PopulationBestCost;
+        
         CrossoverOffspring = crossover(Population, 1:PopulationSize, CrossoverProbablity);
         MutationOffspring = mutation(Population, MutationProbablity);
-
-        Everyone = [Population; CrossoverOffspring; MutationOffspring; BestSolutionSoFar];
-        Population = selection2(Everyone, PopulationSize, Costs, DepotCosts);
+	if PopulationBestCost < BestCostSoFar
+            BestCostSoFar = PopulationBestCost;
+            BestSolutionSoFar = PopulationBestSoln;
+        end
+        Everyone = [Population; CrossoverOffspring; MutationOffspring];
+	Population = selection2(Everyone, PopulationSize, Costs, DepotCosts);
     end
-    plot(Debug)
 end
 
 function [Offspring] = crossover(Population, PotentialParents, CrossoverProbablity)
@@ -113,5 +111,4 @@ function [MinSoln, MinCost] = best_soln_in_population(Population, Costs, DepotCo
         end
     end
 end
-
 

@@ -1,5 +1,8 @@
-function [globalBestSol, globalBestCost, plot_points] = tabu_search( ...
-            costs, tabuLength, numRcvr, MaxIterationsWithoutChange, initialSol)
+function [globalBestSol, globalBestCost, plot_points] = adaptive_ts( ...
+            costs, numRcvr, MaxIterationsWithoutChange, initialSol)
+Lmin = 1;
+Lmax = 50;
+tabuLength= 25;
 
 numPoints = size(initialSol, 2) - (numRcvr - 1);
 swap_tabu = zeros(numPoints, numPoints);
@@ -61,6 +64,20 @@ while noimprovement_count < MaxIterationsWithoutChange
         end
     end
     
+    % adapt
+    % if new solution has lower cost: decrease tenure
+    % else increase tenure
+    previousCost = calculate_cost(currentSol, costs, costs(end, :));
+    if bestNeighbourCost < previousCost
+        if tabuLength > Lmin
+            tabuLength = tabuLength - 1;
+        end
+    elseif bestNeighbourCost >= previousCost
+        if tabuLength < Lmax
+            tabuLength = tabuLength + 1;
+        end
+    end
+    
     swap_tabu(find(swap_tabu)) = swap_tabu(find(swap_tabu)) - 1;
     swap_tabu(swap_tabu < 0) = 0;
     insert_tabu(find(insert_tabu)) = insert_tabu(find(insert_tabu)) - 1;
@@ -81,6 +98,7 @@ while noimprovement_count < MaxIterationsWithoutChange
         globalBestCost = bestNeighbourCost;
         globalBestSol = bestNeighbour;
         noimprovement_count = 0;
+        tabuLength = 1;
     end
 
     %disp(globalBestCost);
